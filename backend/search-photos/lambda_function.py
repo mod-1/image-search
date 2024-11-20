@@ -1,8 +1,10 @@
 import json
 import boto3
-import requests
 import os
 import logging
+import uuid
+from opensearchpy import OpenSearch, RequestsHttpConnection
+from requests.auth import HTTPBasicAuth
 
 # Set up logging
 logger = logging.getLogger()
@@ -15,6 +17,17 @@ lex = boto3.client('lexv2-runtime')
 elasticsearch_endpoint = os.environ['ELASTICSEARCH_ENDPOINT']
 master_username = os.environ['MASTER_USERNAME']
 master_password = os.environ['MASTER_PASSWORD']
+bot_alias_id = os.environ['BOT_ALIAS_ID']
+bot_id = os.environ['BOT_ID']
+
+# Initialize OpenSearch client
+opensearch_client = OpenSearch(
+    hosts=[{'host': elasticsearch_endpoint, 'port': 443}],
+    http_auth=HTTPBasicAuth(master_username, master_password),
+    use_ssl=True,
+    verify_certs=True,
+    connection_class=RequestsHttpConnection
+)
 
 def clean_data(query):
     word_list = query.split(" ")
@@ -23,23 +36,25 @@ def clean_data(query):
 
 def get_labels(query):
     try:
+        session_id = str(uuid.uuid4())
         response = lex.recognize_text(
-            botAliasId=os.environ['BOT_ALIAS_ID'],
-            botId=os.environ['BOT_ID'],
+            botAliasId=bot_alias_id,
+            botId=bot_id,
+            sessionId=session_id,
             localeId='en_US',
             text=query
         )
-        interpreted_value = response["interpretations"][0]["intent"]["slots"]["ObjectName"]["value"]["interpretedValue"]
+        print(response)
+        interpreted_value = response["interpretations"][0]["intent"]["slots"]["SearchKeyword"]["value"]["interpretedValue"]
         labels = clean_data(interpreted_value)
         return labels
     except Exception as e:
         logger.error(f"Error getting labels from Lex: {e}")
         return []
 
-def get_photo_path(keys):
+def query_index(keys):
     try:
         index = 'data'
-        url = f"{elasticsearch_endpoint}/{index}/_search"
         query = {
             "size": 100,
             "query": {
@@ -48,26 +63,29 @@ def get_photo_path(keys):
                 }
             }
         }
-        headers = {"Content-Type": "application/json"}
-        r = requests.get(url, auth=(master_username, master_password),
-                         headers=headers, data=json.dumps(query))
-        response = r.json()
-        
+        response = opensearch_client.search(
+            index=index,
+            body=query
+        )
         image_list = [photo['_source']['objectKey'] for photo in response['hits']['hits']]
         return image_list
     except Exception as e:
-        logger.error(f"Error getting photo path from OpenSearch: {e}")
+        logger.error(f"Error querying OpenSearch index: {e}")
         return []
 
 def lambda_handler(event, context):
+    logger.info(f"Received event: {json.dumps(event)}")
     try:
-        query = event["queryStringParameters"]['q']
+        query = event.get("queryStringParameters", {}).get('q', '')
+        if not query:
+            raise ValueError("Query parameter 'q' is missing")
+
         label_list = get_labels(query)
         logger.info(f"Labels extracted: {label_list}")
         
         image_array = []
         for label in label_list:
-            image_array.extend(get_photo_path(label))
+            image_array.extend(query_index(label))
         
         return {
             'statusCode': 200,

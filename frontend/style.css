@@ -1,0 +1,63 @@
+body {
+    background: url("bg.jpg");
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+h1,
+h3 {
+    color: #333;
+}
+
+.input-group {
+    margin: 20px 0;
+}
+
+.input-group input,
+.input-group button {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.input-group-btn button {
+    background-color: #1da7da;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.input-group-btn button:hover {
+    background-color: #0d8abf;
+}
+
+.banner-section img {
+    margin: 5px;
+    height: 200px;
+    width: 275px;
+}
+
+.banner-section {
+    height: 500px;
+    overflow: auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .input-group input,
+    .input-group button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

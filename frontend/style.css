@@ -50,6 +50,13 @@ h3 {
     overflow: auto;
 }
 
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 10px;

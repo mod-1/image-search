@@ -1,13 +1,13 @@
 document.getElementById('displaytext').style.display = 'none';
 
 function searchPhoto() {
-  var apigClient = apigClientFactory.newClient();
+  const apigClient = apigClientFactory.newClient();
 
-  var user_message = document.getElementById('note-textarea').value;
+  const user_message = document.getElementById('note-textarea').value;
 
-  var body = {};
-  var params = { q: user_message };
-  var additionalParams = {
+  const body = {};
+  const params = { q: user_message };
+  const additionalParams = {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -16,8 +16,6 @@ function searchPhoto() {
   apigClient
     .searchGet(params, body, additionalParams)
     .then(function (res) {
-      var data = {};
-      var data_array = [];
       resp_data = res.data;
       length_of_response = resp_data.length;
       if (length_of_response == 0) {
@@ -26,10 +24,9 @@ function searchPhoto() {
         document.getElementById('displaytext').style.display = 'block';
       }
 
-      resp_data.forEach(function (obj) {
-        var img = new Image();
-        console.log(obj);
-        img.src = obj;
+      resp_data?.keys?.forEach(function (obj) {
+        const img = new Image();
+        img.src = "https://image-search-data.s3.us-east-1.amazonaws.com/" + obj;
         img.setAttribute('class', 'banner-img');
         img.setAttribute('alt', 'effy');
         document.getElementById('displaytext').innerHTML =
@@ -38,14 +35,15 @@ function searchPhoto() {
         document.getElementById('displaytext').style.display = 'block';
       });
     })
-    .catch(function (result) {});
+    .catch(function (err) {
+      console.log(err);
+    });
 }
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    // reader.onload = () => resolve(reader.result)
     reader.onload = () => {
       let encoded = reader.result.replace(/^data:(.*;base64,)?/, '');
       if (encoded.length % 4 > 0) {
@@ -59,28 +57,25 @@ function getBase64(file) {
 
 function uploadPhoto() {
     const file = document.getElementById('file_path').files[0];
-    var customLabels = document.getElementById('note_customtag').value;
+    const customLabels = document.getElementById('note_customtag').value;
     const params = {
         bucket: 'image-search-data',
         key: `${Date.now()}-${file.name}`
     };
-    
-    console.log(params);
-  console.log(customLabels);
   
   getBase64(file).then((data) => {
-    console.log(data);
-    var apigClient = apigClientFactory.newClient();
+    const apigClient = apigClientFactory.newClient();
 
-    var file_type = file.type + ';base64';
+    const file_type = file.type + ';base64';
     const additionalParams = {
       headers: {
+        'Accept': 'image/*',
         'Content-Type': file_type,
-        'x-amz-meta-customLabels': customLabels
+        'x-amz-meta-customlabels': customLabels
       }
     };
 
-    var body = data;
+    const body = data;
     apigClient
       .uploadBucketKeyPut(params, body, additionalParams)
       .then(function (res) {

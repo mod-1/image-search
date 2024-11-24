@@ -2,14 +2,15 @@
 <html lang="en">
 
 <head>
-    <title>Cloud Computing Assignment-3 : Smart Photo Album 2024</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shoelace-css/1.0.0-beta16/shoelace.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Computing Assignment-3: Smart Photo Album 2024</title>
+    <meta name="description" content="A smart photo album application for Cloud Computing Assignment-3">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="data:," type="image/x-icon">
     <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
-    <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/rollups/crypto-js.js"></script>
     <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
     <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
     <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
@@ -24,45 +25,43 @@
 <body>
     <div class="container">
         <div class="app">
-            <div class="heading">
-                <h1>Cloud Computing Assignment-3 Smart Photo Album Fall-2024</h1>
-            </div>
-            <div>
+            <header class="heading">
+                <h1>Cloud Computing Assignment-3: Smart Photo Album Fall-2024</h1>
+            </header>
+            <section>
                 <h3 style="margin-top:30px;text-align:center">Search your photo</h3>
-            </div>
-            <div class="input-group">
-                <input id="note-textarea" type="text" class="form-control" placeholder="Search your photo" name="search"
-                    aria-label="Search your photo">
-                <div class="input-group-btn">
-                    <button class="btn btn-default" type="submit" onclick="searchPhoto()"> <i class="fa fa-search"></i>
-                    </button>
+                <div class="input-group">
+                    <input id="note-textarea" type="text" class="form-control" placeholder="Search your photo"
+                        name="search" aria-label="Search your photo">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit" onclick="searchPhoto()" aria-label="Search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <br>
-            <br>
-            <h3 style="text-align:center">Upload your new photo</h3>
-            <div class="input-group" style="margin-top:30px;">
-                <input type="file" class="form-control upload" name="search" id="file_path"
-                    aria-label="Upload your photo">
-                <div class="input-group-btn">
-                    <button class="btn btn-default" type="submit" onclick="uploadPhoto()">Upload</button>
+            </section>
+            <section>
+                <h3 style="text-align:center">Upload your new photo</h3>
+                <div class="input-group" style="margin-top:30px;">
+                    <input type="file" class="form-control upload" name="search" id="file_path"
+                        aria-label="Upload your photo">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit" onclick="uploadPhoto()"
+                            aria-label="Upload">Upload</button>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
         <div>
             <input id="note_customtag" type="text" class="form-control" placeholder="Input Custom tag!"
                 aria-label="Input Custom tag">
         </div>
         <p id="uploadText"></p>
-        <div>
-            <div class="banner-section" id="img-container">
-                <p id="displaytext"></p>
-            </div>
+        <div class="banner-section" id="img-container">
+            <p id="displaytext"></p>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="render.js"></script>
-    <script src="apigClient.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 </body>
 
 </html>
